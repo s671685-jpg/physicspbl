@@ -1,1008 +1,685 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Light Patterns Project – Yamen Mohamad Hamad</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --dark: #0d0d1a;
-    --navy: #0f1f45;
-    --teal: #00c9c8;
-    --pink: #ff3e6c;
-    --yellow: #ffd700;
-    --green: #39d98a;
-    --light: #e8eeff;
-    --muted: #7b8bb2;
-    --white: #ffffff;
-    --card-bg: #131830;
+const pptxgen = require("pptxgenjs");
+
+const pres = new pptxgen();
+pres.layout = "LAYOUT_16x9";
+pres.title = "Light Patterns Project";
+pres.author = "Yamen Mohamad Hamad";
+
+// ── PALETTE ──
+const C = {
+  dark:    "0d0d1a",
+  navy:    "0a0e1e",
+  card:    "131830",
+  teal:    "00c9c8",
+  pink:    "ff3e6c",
+  yellow:  "ffd700",
+  green:   "39d98a",
+  light:   "e8eeff",
+  muted:   "7b8bb2",
+  white:   "ffffff",
+  navy2:   "0f1f45",
+  deep:    "08091a",
+};
+
+// ── HELPERS ──
+const makeShadow = () => ({ type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.25 });
+
+function slideLabel(s, num, total, text) {
+  s.addText(`Slide ${num} / ${total}`, {
+    x: 8.5, y: 0.18, w: 1.3, h: 0.25,
+    fontSize: 8, color: "444466", fontFace: "Trebuchet MS", align: "right", margin: 0,
+  });
+  s.addText(text.toUpperCase(), {
+    x: 0.55, y: 0.2, w: 3, h: 0.22,
+    fontSize: 7, color: C.teal, fontFace: "Trebuchet MS", charSpacing: 3, margin: 0,
+  });
+}
+
+function sectionTitle(s, text) {
+  s.addText(text, {
+    x: 0.55, y: 0.5, w: 8.9, h: 0.7,
+    fontSize: 28, bold: true, color: C.white, fontFace: "Trebuchet MS", margin: 0,
+  });
+}
+
+function card(s, x, y, w, h, fillColor) {
+  s.addShape(pres.shapes.RECTANGLE, {
+    x, y, w, h,
+    fill: { color: fillColor },
+    line: { color: fillColor },
+    shadow: makeShadow(),
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 1 — TITLE
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+
+  // Decorative blobs (circles)
+  s.addShape(pres.shapes.OVAL, { x: 6.8, y: -0.8, w: 4.2, h: 4.2, fill: { color: C.teal, transparency: 88 }, line: { color: C.teal, transparency: 88 } });
+  s.addShape(pres.shapes.OVAL, { x: -0.8, y: 3.2, w: 3.5, h: 3.5, fill: { color: C.pink, transparency: 88 }, line: { color: C.pink, transparency: 88 } });
+
+  // Tag pill
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.55, y: 0.45, w: 2.6, h: 0.32, fill: { color: C.teal, transparency: 85 }, rectRadius: 0.1 });
+  s.addText("💡  Physics Project — Term 3", {
+    x: 0.55, y: 0.46, w: 2.6, h: 0.3,
+    fontSize: 8, color: C.teal, fontFace: "Trebuchet MS", align: "center", margin: 0,
+  });
+
+  // Main title
+  s.addText("Light", { x: 0.55, y: 0.9, w: 6, h: 0.75, fontSize: 54, bold: true, color: C.white, fontFace: "Trebuchet MS", margin: 0 });
+  s.addText("Patterns", { x: 0.55, y: 1.6, w: 6, h: 0.75, fontSize: 54, bold: true, color: C.teal, fontFace: "Trebuchet MS", margin: 0 });
+  s.addText("Project", { x: 0.55, y: 2.3, w: 6, h: 0.75, fontSize: 54, bold: true, color: C.white, fontFace: "Trebuchet MS", margin: 0 });
+
+  // Subtitle
+  s.addText("How Diffraction and Interference Prove That Light is a Wave", {
+    x: 0.55, y: 3.15, w: 6.5, h: 0.45,
+    fontSize: 13, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Animated wave bars (static representation)
+  const bars = [{ w: 0.55, op: 90 }, { w: 0.35, op: 70 }, { w: 0.7, op: 80 }, { w: 0.28, op: 50 }, { w: 0.5, op: 60 }];
+  let bx = 0.55;
+  bars.forEach(b => {
+    s.addShape(pres.shapes.RECTANGLE, { x: bx, y: 3.7, w: b.w, h: 0.06, fill: { color: C.teal, transparency: 100 - b.op }, line: { color: C.teal, transparency: 100 - b.op } });
+    bx += b.w + 0.1;
+  });
+
+  // Name badge
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y: 3.95, w: 5.0, h: 0.68, fill: { color: C.yellow, transparency: 92 }, line: { color: C.yellow, transparency: 70 } });
+  s.addText("Yamen Mohamad Hamad", {
+    x: 0.65, y: 4.0, w: 4.8, h: 0.3,
+    fontSize: 13, bold: true, color: C.yellow, fontFace: "Trebuchet MS", margin: 0,
+  });
+  s.addText("Grade 10D  ·  Al Nahda National School – Boys", {
+    x: 0.65, y: 4.28, w: 4.8, h: 0.28,
+    fontSize: 10, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Meta
+  s.addText("WK25 – WK28  ·  April 13 – May 8, 2025  ·  2025–2026 Term 3", {
+    x: 0.55, y: 4.75, w: 7, h: 0.25,
+    fontSize: 9, color: "444466", fontFace: "Calibri", margin: 0,
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 2 — TABLE OF CONTENTS
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 2, 13, "Contents");
+  sectionTitle(s, "📋  What I'll Cover");
+
+  const items = [
+    ["01", "The Driving Question",       "How does light prove it's a wave?"],
+    ["02", "What is a Wave?",            "A quick recap on waves"],
+    ["03", "Diffraction",                "When light bends around things"],
+    ["04", "Interference",               "When waves meet each other"],
+    ["05", "Young's Double-Slit Exp.",   "The classic experiment"],
+    ["06", "The Math Behind It",         "Equations and formulas"],
+    ["07", "Real Life Examples",         "Where we see this everyday"],
+    ["08", "Evidence Summary",           "All proof in one place"],
+    ["09", "My Reflection",              "What I learned"],
+    ["10", "Sources",                    "McGraw Hill, PhET, YouTube"],
+  ];
+
+  items.forEach((item, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    const x = col === 0 ? 0.55 : 5.3;
+    const y = 1.3 + row * 0.87;
+
+    card(s, x, y, 4.55, 0.76, C.card);
+    s.addText(item[0], { x: x + 0.12, y: y + 0.1, w: 0.45, h: 0.28, fontSize: 13, bold: true, color: C.teal, fontFace: "Trebuchet MS", margin: 0 });
+    s.addText(item[1], { x: x + 0.62, y: y + 0.08, w: 3.8, h: 0.3, fontSize: 12, bold: true, color: C.white, fontFace: "Trebuchet MS", margin: 0 });
+    s.addText(item[2], { x: x + 0.62, y: y + 0.38, w: 3.8, h: 0.25, fontSize: 9.5, color: C.muted, fontFace: "Calibri", margin: 0 });
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 3 — DRIVING QUESTION
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+  s.addShape(pres.shapes.OVAL, { x: 7.5, y: -0.5, w: 3, h: 3, fill: { color: C.teal, transparency: 88 }, line: { color: C.teal, transparency: 88 } });
+
+  slideLabel(s, 3, 13, "The Challenge");
+  sectionTitle(s, "🚀  Driving Question");
+
+  // Quote box
+  card(s, 0.55, 1.28, 8.9, 1.0, C.navy2);
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y: 1.28, w: 0.08, h: 1.0, fill: { color: C.teal }, line: { color: C.teal } });
+  s.addText('"How do diffraction and interference show that light behaves like a wave?"', {
+    x: 0.75, y: 1.33, w: 8.6, h: 0.9,
+    fontSize: 16, italic: true, color: C.teal, fontFace: "Trebuchet MS", wrap: true, margin: 0,
+  });
+
+  s.addText("To answer this question, I need to:", {
+    x: 0.55, y: 2.42, w: 8, h: 0.3, fontSize: 12, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  const steps = [
+    ["🔍", "Understand what waves actually are and how they behave"],
+    ["🌊", "Research how diffraction and interference work"],
+    ["🔬", "Look at real experiments like Young's Double-Slit"],
+    ["📊", "Gather evidence to prove light is a wave"],
+  ];
+  steps.forEach((st, i) => {
+    card(s, 0.55, 2.82 + i * 0.57, 8.9, 0.48, C.card);
+    s.addText(st[0], { x: 0.65, y: 2.85 + i * 0.57, w: 0.38, h: 0.38, fontSize: 14, margin: 0 });
+    s.addText(st[1], { x: 1.1, y: 2.87 + i * 0.57, w: 8.2, h: 0.35, fontSize: 12, color: C.light, fontFace: "Calibri", margin: 0 });
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 4 — WHAT IS A WAVE
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 4, 13, "Background Knowledge");
+  sectionTitle(s, "🌊  What is a Wave? — Quick Recap");
+
+  // Left column text
+  s.addText("A wave is a disturbance that transfers energy from one place to another without moving matter.", {
+    x: 0.55, y: 1.3, w: 4.4, h: 0.65, fontSize: 12, color: C.light, fontFace: "Calibri", wrap: true, margin: 0,
+  });
+  s.addText("Light is an electromagnetic wave — it doesn't need anything to travel through!", {
+    x: 0.55, y: 2.0, w: 4.4, h: 0.5, fontSize: 12, color: C.teal, fontFace: "Calibri", italic: true, wrap: true, margin: 0,
+  });
+
+  // Property cards 2x2
+  const props = [
+    ["λ", "Wavelength", "Distance between wave peaks"],
+    ["f", "Frequency",  "Waves per second (Hz)"],
+    ["A", "Amplitude",  "Height of the wave"],
+    ["v", "Speed",      "How fast it travels"],
+  ];
+  props.forEach((p, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 0.55 + col * 2.28, y = 2.62 + row * 1.0;
+    card(s, x, y, 2.1, 0.88, C.card);
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: 2.1, h: 0.08, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addText(p[0], { x: x + 0.1, y: y + 0.12, w: 0.45, h: 0.38, fontSize: 20, bold: true, color: C.teal, fontFace: "Trebuchet MS", margin: 0 });
+    s.addText(p[1], { x: x + 0.55, y: y + 0.13, w: 1.5, h: 0.28, fontSize: 12, bold: true, color: C.white, fontFace: "Calibri", margin: 0 });
+    s.addText(p[2], { x: x + 0.1, y: y + 0.55, w: 1.95, h: 0.25, fontSize: 9.5, color: C.muted, fontFace: "Calibri", margin: 0 });
+  });
+
+  // Right — wave diagram card
+  card(s, 5.15, 1.25, 4.7, 2.3, C.card);
+  s.addText("Wave Diagram", { x: 5.25, y: 1.32, w: 4.5, h: 0.28, fontSize: 9, color: C.muted, fontFace: "Calibri", charSpacing: 2, align: "center", margin: 0 });
+
+  // Draw wave using shapes (sine approximation)
+  const wCx = 5.3, wCy = 2.35, wAmp = 0.38, wLen = 4.4, segs = 40;
+  for (let i = 0; i < segs; i++) {
+    const t = i / segs;
+    const x1 = wCx + t * wLen;
+    const y1 = wCy - Math.sin(t * Math.PI * 4) * wAmp;
+    s.addShape(pres.shapes.OVAL, { x: x1, y: y1, w: 0.12, h: 0.06, fill: { color: C.teal }, line: { color: C.teal } });
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  // Amplitude arrow
+  s.addShape(pres.shapes.LINE, { x: 6.2, y: wCy - wAmp - 0.02, w: 0, h: wAmp, line: { color: C.pink, width: 1.5, dashType: "dash" } });
+  s.addText("A", { x: 6.25, y: wCy - wAmp * 0.5 - 0.1, w: 0.25, h: 0.22, fontSize: 9, color: C.pink, fontFace: "Calibri", margin: 0 });
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--dark);
-    color: var(--white);
-    overflow-x: hidden;
+  // Wavelength bracket
+  s.addShape(pres.shapes.LINE, { x: 5.3, y: wCy + 0.52, w: 1.1, h: 0, line: { color: C.yellow, width: 1.5 } });
+  s.addText("λ", { x: 5.75, y: wCy + 0.56, w: 0.28, h: 0.22, fontSize: 10, bold: true, color: C.yellow, fontFace: "Calibri", align: "center", margin: 0 });
+
+  // Formula box
+  card(s, 5.15, 3.65, 4.7, 0.72, C.navy2);
+  s.addText("v = f × λ", { x: 5.15, y: 3.7, w: 4.7, h: 0.36, fontSize: 22, bold: true, color: C.teal, fontFace: "Trebuchet MS", align: "center", margin: 0 });
+  s.addText("speed = frequency × wavelength", { x: 5.15, y: 4.04, w: 4.7, h: 0.25, fontSize: 9.5, italic: true, color: C.muted, fontFace: "Calibri", align: "center", margin: 0 });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 5 — DIFFRACTION
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+  slideLabel(s, 5, 13, "Evidence #1");
+  sectionTitle(s, "🔀  What is Diffraction?");
+
+  s.addText("Diffraction = when waves bend around obstacles or spread out through narrow openings", {
+    x: 0.55, y: 1.28, w: 8.9, h: 0.32, fontSize: 12, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Left card
+  card(s, 0.55, 1.7, 4.4, 3.4, C.card);
+  s.addText("What happens:", { x: 0.65, y: 1.78, w: 4.2, h: 0.3, fontSize: 13, bold: true, color: C.teal, fontFace: "Trebuchet MS", margin: 0 });
+
+  const dpts = [
+    "Light passes through a narrow slit → it SPREADS OUT instead of going straight",
+    "Smaller slit (vs wavelength) = MORE spreading",
+    "This spreading ONLY happens with waves",
+    "Particles would go straight — no spreading!",
+    "Strong evidence that light is a wave 🌊",
+  ];
+  dpts.forEach((pt, i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x: 0.65, y: 2.18 + i * 0.56, w: 0.06, h: 0.3, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addText(pt, { x: 0.8, y: 2.18 + i * 0.56, w: 4.05, h: 0.5, fontSize: 11, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+
+  // Right — diffraction diagram
+  card(s, 5.15, 1.7, 4.6, 3.4, C.deep);
+  s.addText("Diffraction Diagram", { x: 5.15, y: 1.78, w: 4.6, h: 0.25, fontSize: 9, color: C.yellow, fontFace: "Trebuchet MS", align: "center", charSpacing: 1, margin: 0 });
+
+  // Incoming wave lines
+  for (let i = 0; i < 7; i++) {
+    const yw = 2.15 + i * 0.38;
+    if (yw < 3.12 || yw > 3.62) {
+      s.addShape(pres.shapes.LINE, { x: 5.3, y: yw, w: 1.3, h: 0, line: { color: C.teal, width: 1.5, transparency: 20 } });
+    }
   }
 
-  /* ── SLIDE CONTAINER ── */
-  .slide {
-    min-height: 50vh;
-    padding: 10px 8vw;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
+  // Barrier
+  s.addShape(pres.shapes.RECTANGLE, { x: 6.6, y: 2.05, w: 0.1, h: 1.05, fill: { color: C.white }, line: { color: C.white } });
+  s.addShape(pres.shapes.RECTANGLE, { x: 6.6, y: 3.65, w: 0.1, h: 1.35, fill: { color: C.white }, line: { color: C.white } });
+  s.addText("← slit →", { x: 6.3, y: 3.25, w: 0.8, h: 0.25, fontSize: 8, color: C.yellow, fontFace: "Calibri", align: "center", margin: 0 });
 
-  /* decorative blobs */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .slide > * { position: relative; z-index: 1; }
-
-  /* ── TYPOGRAPHY ── */
-  .label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 10px;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    font-weight: 800;
-    line-height: 1.05;
-    color: var(--white);
-  }
-
-  h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 18px;
-  }
-
-  h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-
-  p, li { font-size: 0.98rem; line-height: 1.7; color: var(--light); }
-
-  /* ── NAV DOTS ── */
-  #nav {
-    position: fixed;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 100;
-  }
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .dot.active { background: var(--teal); transform: scale(1.4); }
-
-  /* ── SLIDE 1: TITLE ── */
-  #s1 {
-    background: var(--dark);
-    min-height: 100vh;
-    justify-content: center;
-  }
-  #s1 .blob-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,201,200,0.18) 0%, transparent 70%); top: -100px; right: -100px; }
-  #s1 .blob-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,62,108,0.15) 0%, transparent 70%); bottom: -80px; left: -80px; }
-
-  .title-tag {
-    display: inline-block;
-    background: rgba(0,201,200,0.15);
-    border: 1px solid rgba(0,201,200,0.4);
-    color: var(--teal);
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 100px;
-    margin-bottom: 24px;
-    font-family: 'Syne', sans-serif;
-  }
-
-  .title-accent { color: var(--teal); }
-
-  .title-sub {
-    font-size: 1.15rem;
-    color: var(--muted);
-    margin-top: 16px;
-    font-style: italic;
-    max-width: 600px;
-  }
-
-  .name-badge {
-    margin-top: 40px;
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    background: rgba(255,215,0,0.08);
-    border: 1px solid rgba(255,215,0,0.3);
-    padding: 12px 22px;
-    border-radius: 8px;
-  }
-  .name-badge .name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--yellow); }
-  .name-badge .grade { font-size: 0.85rem; color: var(--muted); }
-
-  .meta-row { margin-top: 16px; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.05em; }
-
-  /* wave animation */
-  .wave-line { display: flex; gap: 8px; margin-top: 40px; }
-  .wave-bar {
-    height: 4px;
-    border-radius: 4px;
-    background: var(--teal);
-    animation: wavePulse 1.6s ease-in-out infinite;
-  }
-  .wave-bar:nth-child(1) { width: 60px; animation-delay: 0s; opacity: 0.9; }
-  .wave-bar:nth-child(2) { width: 40px; animation-delay: 0.1s; opacity: 0.7; }
-  .wave-bar:nth-child(3) { width: 80px; animation-delay: 0.2s; opacity: 0.8; }
-  .wave-bar:nth-child(4) { width: 30px; animation-delay: 0.3s; opacity: 0.5; }
-  .wave-bar:nth-child(5) { width: 55px; animation-delay: 0.4s; opacity: 0.6; }
-  @keyframes wavePulse {
-    0%, 100% { transform: scaleX(1); opacity: 0.6; }
-    50% { transform: scaleX(1.15); opacity: 1; }
-  }
-
-  /* ── SLIDE 2: TOC ── */
-  #s2 { background: #0a0e1e; }
-  .toc-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-top: 24px;
-  }
-  .toc-item {
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    transition: border-color 0.2s;
-  }
-  .toc-item:hover { border-color: var(--teal); }
-  .toc-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--teal);
-    min-width: 28px;
-  }
-  .toc-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--white); }
-  .toc-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-
-  /* ── SLIDE 3: DRIVING Q ── */
-  #s3 { background: linear-gradient(135deg, #0d0d1a 60%, #0f1f45 100%); }
-  .dq-box {
-    background: rgba(0,201,200,0.07);
-    border: 1.5px solid rgba(0,201,200,0.35);
-    border-radius: 14px;
-    padding: 28px 32px;
-    margin: 24px 0;
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1rem, 2.2vw, 1.3rem);
-    font-style: italic;
-    color: var(--teal);
-    line-height: 1.5;
-  }
-  .step-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-  .step-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
-    padding: 12px 16px;
-  }
-  .step-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
-
-  /* ── SLIDE 4: WAVES ── */
-  #s4 { background: #0a0e1e; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; margin-top: 24px; }
-  .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
-  .prop-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 14px 16px;
-    border-top: 3px solid var(--teal);
-  }
-  .prop-card .sym { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--teal); }
-  .prop-card .def { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
-
-  /* SVG wave */
-  .wave-svg-wrap {
-    background: var(--card-bg);
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .formula-box {
-    background: rgba(0,201,200,0.1);
-    border: 1px solid rgba(0,201,200,0.3);
-    border-radius: 8px;
-    padding: 12px 18px;
-    text-align: center;
-    font-family: 'Syne', sans-serif;
-    font-size: 1.3rem;
-    color: var(--teal);
-    font-weight: 700;
-    margin-top: 14px;
-  }
-  .formula-sub { font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 4px; }
-
-  /* ── SLIDE 5: DIFFRACTION ── */
-  #s5 { background: var(--dark); }
-  .diff-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 24px; }
-  .dark-card {
-    background: var(--card-bg);
-    border-radius: 14px;
-    padding: 24px;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .dark-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .dark-card ul li { padding-left: 18px; position: relative; font-size: 0.92rem; }
-  .dark-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--teal); }
-
-  /* ── SLIDE 6: INTERFERENCE ── */
-  #s6 { background: #0a0e1e; }
-  .vs-layout { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; margin-top: 24px; }
-  .vs-card { border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 10px; }
-  .vs-card.con { background: rgba(57,217,138,0.08); border: 1.5px solid rgba(57,217,138,0.3); }
-  .vs-card.des { background: rgba(255,62,108,0.08); border: 1.5px solid rgba(255,62,108,0.3); }
-  .vs-label { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; }
-  .vs-label.con { color: var(--green); }
-  .vs-label.des { color: var(--pink); }
-  .vs-mid {
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
-    color: var(--muted); writing-mode: vertical-lr;
-  }
-  .vs-point { font-size: 0.9rem; padding: 8px 12px; border-radius: 6px; }
-  .vs-card.con .vs-point { background: rgba(57,217,138,0.08); color: #a8f0cc; }
-  .vs-card.des .vs-point { background: rgba(255,62,108,0.08); color: #ffaabb; }
-  .result-tag { display: inline-block; padding: 4px 12px; border-radius: 100px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; margin-top: 8px; }
-  .result-tag.bright { background: rgba(255,215,0,0.15); color: var(--yellow); border: 1px solid rgba(255,215,0,0.3); }
-  .result-tag.dark { background: rgba(100,100,150,0.2); color: #aaa; border: 1px solid rgba(150,150,200,0.2); }
-
-  /* ── SLIDE 7: YOUNG'S ── */
-  #s7 { background: var(--dark); }
-  .young-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-top: 24px; align-items: start; }
-  .step-numbered { display: flex; flex-direction: column; gap: 10px; }
-  .yn-step { display: flex; align-items: flex-start; gap: 14px; }
-  .yn-num {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--teal);
-    color: var(--dark);
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 0.85rem;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .yn-text { font-size: 0.92rem; line-height: 1.55; color: var(--light); }
-
-  /* ── SLIDE 8: MATH ── */
-  #s8 { background: #0a0e1e; }
-  .eq-box {
-    background: rgba(0,201,200,0.07);
-    border: 2px solid rgba(0,201,200,0.3);
-    border-radius: 14px;
-    padding: 24px 32px;
-    text-align: center;
-    margin: 20px 0;
-  }
-  .eq-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-family: 'Syne', sans-serif; }
-  .eq-formula { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: var(--teal); }
-  .var-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .var-card {
-    display: flex; align-items: flex-start; gap: 14px;
-    background: var(--card-bg); border-radius: 10px; padding: 14px 16px;
-  }
-  .var-sym {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800;
-    flex-shrink: 0;
-  }
-  .var-def { font-size: 0.88rem; color: var(--light); line-height: 1.4; }
-
-  /* ── SLIDE 9: REAL LIFE ── */
-  #s9 { background: var(--dark); }
-  .eg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 24px; }
-  .eg-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px 18px;
-    border: 1px solid rgba(255,255,255,0.06);
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .eg-card:hover { transform: translateY(-4px); border-color: rgba(0,201,200,0.3); }
-  .eg-icon { font-size: 1.8rem; margin-bottom: 10px; }
-  .eg-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); margin-bottom: 6px; }
-  .eg-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
-
-  /* ── SLIDE 10: EVIDENCE ── */
-  #s10 { background: #0a0e1e; }
-  .ev-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-  .ev-row {
-    display: flex; align-items: center; gap: 16px;
-    background: var(--card-bg);
-    border-radius: 10px;
-    padding: 14px 18px;
-    border-left: 4px solid var(--teal);
-  }
-  .ev-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--teal); min-width: 32px; }
-  .ev-body { flex: 1; }
-  .ev-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); }
-  .ev-detail { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
-  .ev-badge {
-    font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
-    background: rgba(57,217,138,0.12); color: var(--green);
-    border: 1px solid rgba(57,217,138,0.25);
-    padding: 4px 10px; border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  /* ── SLIDE 11: REFLECTION ── */
-  #s11 { background: var(--dark); }
-  .ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
-  .ref-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06); }
-  .ref-q { font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-  .ref-a { font-size: 0.88rem; color: var(--light); line-height: 1.65; font-style: italic; }
-
-  /* ── SLIDE 12: SOURCES ── */
-  #s12 { background: #0a0e1e; }
-  .src-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 24px; }
-  .src-card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.06); }
-  .src-cat { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
-  .src-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .src-card ul li { font-size: 0.83rem; color: var(--muted); padding-left: 14px; position: relative; }
-  .src-card ul li::before { content: '›'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
-
-  /* ── SLIDE 13: CONCLUSION ── */
-  #s13 {
-    background: linear-gradient(135deg, #0d0d1a 0%, #0f1f45 100%);
-    min-height: 100vh;
-  }
-  .conc-quote {
-    background: rgba(0,201,200,0.06);
-    border: 1.5px solid rgba(0,201,200,0.2);
-    border-radius: 14px;
-    padding: 24px 28px;
-    margin: 20px 0 28px;
-    font-style: italic;
-    color: var(--teal);
-    line-height: 1.65;
-    font-size: 0.98rem;
-  }
-  .conc-points { display: flex; flex-direction: column; gap: 10px; }
-  .conc-point {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
-  }
-  .conc-check { color: var(--green); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
-  .conc-text { font-size: 0.93rem; color: var(--light); }
-  .footer-bar {
-    margin-top: 40px;
-    background: var(--pink);
-    border-radius: 8px;
-    padding: 12px 20px;
-    text-align: center;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: 0.04em;
-  }
-
-  /* ── SLIDE NUMBER BADGE ── */
-  .slide-badge {
-    position: absolute;
-    top: 24px;
-    right: 8vw;
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.2);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  /* ── SCROLL REVEAL ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: none; }
-
-  /* stagger */
-  .reveal:nth-child(1) { transition-delay: 0s; }
-  .reveal:nth-child(2) { transition-delay: 0.08s; }
-  .reveal:nth-child(3) { transition-delay: 0.16s; }
-  .reveal:nth-child(4) { transition-delay: 0.24s; }
-  .reveal:nth-child(5) { transition-delay: 0.32s; }
-  .reveal:nth-child(6) { transition-delay: 0.4s; }
-
-  /* Diffraction diagram */
-  .diff-diagram {
-    background: #08091a;
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 220px;
-  }
-
-  /* Young's diagram box */
-  .young-diagram {
-    background: #08091a;
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
-  }
-
-  @media (max-width: 700px) {
-    .two-col, .diff-layout, .young-layout, .ref-grid, .src-grid, .vs-layout { grid-template-columns: 1fr; }
-    .eg-grid { grid-template-columns: 1fr 1fr; }
-    .toc-grid { grid-template-columns: 1fr; }
-    .var-grid { grid-template-columns: 1fr; }
-    .vs-mid { writing-mode: horizontal-tb; }
-  }
-</style>
-</head>
-<body>
-
-<!-- NAV DOTS -->
-<div id="nav">
-  <div class="dot active" onclick="scrollToSlide(0)"></div>
-  <div class="dot" onclick="scrollToSlide(1)"></div>
-  <div class="dot" onclick="scrollToSlide(2)"></div>
-  <div class="dot" onclick="scrollToSlide(3)"></div>
-  <div class="dot" onclick="scrollToSlide(4)"></div>
-  <div class="dot" onclick="scrollToSlide(5)"></div>
-  <div class="dot" onclick="scrollToSlide(6)"></div>
-  <div class="dot" onclick="scrollToSlide(7)"></div>
-  <div class="dot" onclick="scrollToSlide(8)"></div>
-  <div class="dot" onclick="scrollToSlide(9)"></div>
-  <div class="dot" onclick="scrollToSlide(10)"></div>
-  <div class="dot" onclick="scrollToSlide(11)"></div>
-  <div class="dot" onclick="scrollToSlide(12)"></div>
-</div>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 1: TITLE -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s1">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-
-  <div class="reveal">
-    <div class="title-tag">💡 Physics Project — Term 3</div>
-  </div>
-  <div class="reveal">
-    <h1>Light<br><span class="title-accent">Patterns</span><br>Project</h1>
-  </div>
-  <div class="reveal">
-    <p class="title-sub">How Diffraction and Interference Prove That Light is a Wave</p>
-  </div>
-  <div class="reveal">
-    <div class="wave-line">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-    </div>
-  </div>
-  <div class="reveal">
-    <div class="name-badge">
-      <div>
-        <div class="name">Yamen Mohamad Hamad</div>
-        <div class="grade">Grade 10D &nbsp;·&nbsp; Al Nahda National School – Boys</div>
-      </div>
-    </div>
-  </div>
-  <div class="reveal">
-    <p class="meta-row">WK25 – WK28 &nbsp;·&nbsp; April 13 – May 8, 2025 &nbsp;·&nbsp; 2025–2026 Term 3</p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 2: TABLE OF CONTENTS -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s2">
-  <div class="slide-badge">Slide 2 / 13</div>
-  <div class="reveal"><div class="label">Contents</div></div>
-  <div class="reveal"><h2>📋 What I'll Cover</h2></div>
-  <div class="reveal">
-    <div class="toc-grid">
-      <div class="toc-item"><div class="toc-num">01</div><div><div class="toc-title">The Driving Question</div><div class="toc-sub">How does light prove it's a wave?</div></div></div>
-      <div class="toc-item"><div class="toc-num">02</div><div><div class="toc-title">What is a Wave?</div><div class="toc-sub">A quick recap on waves</div></div></div>
-      <div class="toc-item"><div class="toc-num">03</div><div><div class="toc-title">Diffraction</div><div class="toc-sub">When light bends around things</div></div></div>
-      <div class="toc-item"><div class="toc-num">04</div><div><div class="toc-title">Interference</div><div class="toc-sub">When waves meet each other</div></div></div>
-      <div class="toc-item"><div class="toc-num">05</div><div><div class="toc-title">Young's Double-Slit Exp.</div><div class="toc-sub">The classic experiment</div></div></div>
-      <div class="toc-item"><div class="toc-num">06</div><div><div class="toc-title">The Math Behind It</div><div class="toc-sub">Equations and formulas</div></div></div>
-      <div class="toc-item"><div class="toc-num">07</div><div><div class="toc-title">Real Life Examples</div><div class="toc-sub">Where we see this everyday</div></div></div>
-      <div class="toc-item"><div class="toc-num">08</div><div><div class="toc-title">Evidence Summary</div><div class="toc-sub">All proof in one place</div></div></div>
-      <div class="toc-item"><div class="toc-num">09</div><div><div class="toc-title">My Reflection</div><div class="toc-sub">What I learned</div></div></div>
-      <div class="toc-item"><div class="toc-num">10</div><div><div class="toc-title">Sources</div><div class="toc-sub">McGraw Hill, PhET, YouTube</div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 3: DRIVING QUESTION -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s3">
-  <div class="slide-badge">Slide 3 / 13</div>
-  <div class="reveal"><div class="label">The Challenge</div></div>
-  <div class="reveal"><h2>🚀 Driving Question</h2></div>
-  <div class="reveal">
-    <div class="dq-box">
-      "How do diffraction and interference show that light behaves like a wave?"
-    </div>
-  </div>
-  <div class="reveal"><p style="color:var(--muted); margin-bottom:12px;">To answer this question, I need to:</p></div>
-  <div class="reveal">
-    <div class="step-list">
-      <div class="step-item"><div class="step-icon">🔍</div><p>Understand what waves actually are and how they behave</p></div>
-      <div class="step-item"><div class="step-icon">🌊</div><p>Research how diffraction and interference work</p></div>
-      <div class="step-item"><div class="step-icon">🔬</div><p>Look at real experiments like Young's Double-Slit</p></div>
-      <div class="step-item"><div class="step-icon">📊</div><p>Gather evidence to prove light is a wave</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 4: WHAT IS A WAVE -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s4">
-  <div class="slide-badge">Slide 4 / 13</div>
-  <div class="reveal"><div class="label">Background Knowledge</div></div>
-  <div class="reveal"><h2>🌊 What is a Wave? — Quick Recap</h2></div>
-  <div class="reveal">
-    <div class="two-col">
-      <div>
-        <p style="margin-bottom:16px;">A wave is a disturbance that transfers <strong>energy</strong> from one place to another without moving matter.</p>
-        <p style="margin-bottom:20px; color:var(--teal);">Light is an electromagnetic wave — it doesn't need anything to travel through!</p>
-        <div class="prop-grid">
-          <div class="prop-card"><div class="sym">λ</div><div style="font-size:0.9rem;font-weight:600;color:var(--white);margin-top:4px;">Wavelength</div><div class="def">Distance between wave peaks</div></div>
-          <div class="prop-card"><div class="sym">f</div><div style="font-size:0.9rem;font-weight:600;color:var(--white);margin-top:4px;">Frequency</div><div class="def">Waves per second (Hz)</div></div>
-          <div class="prop-card"><div class="sym">A</div><div style="font-size:0.9rem;font-weight:600;color:var(--white);margin-top:4px;">Amplitude</div><div class="def">Height of the wave</div></div>
-          <div class="prop-card"><div class="sym">v</div><div style="font-size:0.9rem;font-weight:600;color:var(--white);margin-top:4px;">Speed</div><div class="def">How fast it travels</div></div>
-        </div>
-      </div>
-      <div class="wave-svg-wrap">
-        <p class="label" style="margin:0 0 8px;">Wave diagram</p>
-        <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-          <!-- axis -->
-          <line x1="10" y1="60" x2="310" y2="60" stroke="#2a3060" stroke-width="1"/>
-          <!-- wave -->
-          <path d="M10,60 C25,20 45,20 60,60 S95,100 110,60 S145,20 160,60 S195,100 210,60 S245,20 260,60 S295,100 310,60"
-                fill="none" stroke="#00c9c8" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- amplitude arrows -->
-          <line x1="60" y1="60" x2="60" y2="20" stroke="#ff3e6c" stroke-width="1.5" stroke-dasharray="3,2"/>
-          <text x="63" y="38" fill="#ff3e6c" font-size="9" font-family="sans-serif">A</text>
-          <!-- wavelength bracket -->
-          <line x1="10" y1="105" x2="110" y2="105" stroke="#ffd700" stroke-width="1.5"/>
-          <line x1="10" y1="100" x2="10" y2="110" stroke="#ffd700" stroke-width="1.5"/>
-          <line x1="110" y1="100" x2="110" y2="110" stroke="#ffd700" stroke-width="1.5"/>
-          <text x="45" y="117" fill="#ffd700" font-size="9" font-family="sans-serif">λ (wavelength)</text>
-        </svg>
-        <div class="formula-box">v = f × λ</div>
-        <p class="formula-sub">speed = frequency × wavelength</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 5: DIFFRACTION -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s5">
-  <div class="slide-badge">Slide 5 / 13</div>
-  <div class="reveal"><div class="label">Evidence #1</div></div>
-  <div class="reveal"><h2>🔀 What is Diffraction?</h2></div>
-  <div class="reveal"><p style="color:var(--muted); font-style:italic; margin-bottom:20px;">Diffraction = when waves bend around obstacles or spread out through narrow openings</p></div>
-  <div class="reveal">
-    <div class="diff-layout">
-      <div class="dark-card">
-        <h3 style="color:var(--teal); margin-bottom:14px;">What happens:</h3>
-        <ul>
-          <li>When light passes through a narrow slit, it doesn't just go straight — it <strong>SPREADS OUT</strong></li>
-          <li>The smaller the slit (vs wavelength), the MORE spreading occurs</li>
-          <li>This spreading is called diffraction and ONLY waves can do this</li>
-          <li>Particles would just go straight through — no spreading!</li>
-          <li>This is strong evidence that light behaves as a wave 🌊</li>
-        </ul>
-      </div>
-      <div class="diff-diagram">
-        <svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:320px;">
-          <!-- incoming waves -->
-          <g opacity="0.7">
-            <line x1="10" y1="30" x2="100" y2="30" stroke="#00c9c8" stroke-width="1.8"/>
-            <line x1="10" y1="60" x2="100" y2="60" stroke="#00c9c8" stroke-width="1.8"/>
-            <line x1="10" y1="90" x2="100" y2="90" stroke="#00c9c8" stroke-width="1.8"/>
-            <line x1="10" y1="120" x2="100" y2="120" stroke="#00c9c8" stroke-width="1.8"/>
-            <line x1="10" y1="150" x2="100" y2="150" stroke="#00c9c8" stroke-width="1.8"/>
-            <line x1="10" y1="170" x2="100" y2="170" stroke="#00c9c8" stroke-width="1.8"/>
-          </g>
-          <!-- barrier -->
-          <rect x="100" y="0" width="8" height="80" fill="#e8eeff"/>
-          <rect x="100" y="120" width="8" height="80" fill="#e8eeff"/>
-          <!-- slit label -->
-          <text x="80" y="103" fill="#ffd700" font-size="9" font-family="sans-serif">slit</text>
-          <!-- diffracted arcs -->
-          <g fill="none" stroke="#ff3e6c" stroke-width="1.5" opacity="0.8">
-            <path d="M108,100 Q140,60 180,30"/>
-            <path d="M108,100 Q145,75 190,55"/>
-            <path d="M108,100 Q148,90 200,90"/>
-            <path d="M108,100 Q148,110 200,115"/>
-            <path d="M108,100 Q145,125 190,145"/>
-            <path d="M108,100 Q140,140 180,170"/>
-          </g>
-          <!-- labels -->
-          <text x="12" y="14" fill="#7b8bb2" font-size="9" font-family="sans-serif">incoming</text>
-          <text x="12" y="25" fill="#7b8bb2" font-size="9" font-family="sans-serif">waves →</text>
-          <text x="180" y="15" fill="#ff3e6c" font-size="9" font-family="sans-serif">waves fan</text>
-          <text x="180" y="26" fill="#ff3e6c" font-size="9" font-family="sans-serif">out! ✨</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 6: INTERFERENCE -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s6">
-  <div class="slide-badge">Slide 6 / 13</div>
-  <div class="reveal"><div class="label">Evidence #2</div></div>
-  <div class="reveal"><h2>🤝 Constructive vs Destructive Interference</h2></div>
-  <div class="reveal"><p style="color:var(--muted); font-style:italic; margin-bottom:6px;">When two waves meet, they interact — this is called INTERFERENCE</p></div>
-  <div class="reveal">
-    <div class="vs-layout">
-      <div class="vs-card con">
-        <div class="vs-label con">✅ CONSTRUCTIVE</div>
-        <div class="vs-point">Two crests meet <strong>OR</strong> two troughs meet</div>
-        <div class="vs-point">The waves <strong>ADD TOGETHER</strong> and get BIGGER</div>
-        <div class="vs-point">Crest + Crest = Double crest! 🌟</div>
-        <div><span class="result-tag bright">= BRIGHT SPOT</span></div>
-        <svg viewBox="0 0 200 70" style="margin-top:10px; width:100%;">
-          <text x="4" y="14" fill="#7b8bb2" font-size="8">Wave 1</text>
-          <path d="M40,25 C52,5 62,5 74,25 S96,45 108,25 S130,5 142,25 S164,45 176,25" fill="none" stroke="#39d98a" stroke-width="2"/>
-          <text x="4" y="44" fill="#7b8bb2" font-size="8">Wave 2</text>
-          <path d="M40,42 C52,22 62,22 74,42 S96,62 108,42 S130,22 142,42 S164,62 176,42" fill="none" stroke="#39d98a" stroke-width="2"/>
-          <text x="4" y="64" fill="#ffd700" font-size="8">Result</text>
-          <path d="M40,50 C52,10 62,10 74,50 S96,90 108,50 S130,10 142,50 S164,90 176,50" fill="none" stroke="#ffd700" stroke-width="2.5"/>
-        </svg>
-      </div>
-      <div class="vs-mid">VS</div>
-      <div class="vs-card des">
-        <div class="vs-label des">❌ DESTRUCTIVE</div>
-        <div class="vs-point">A crest meets a trough</div>
-        <div class="vs-point">The waves <strong>CANCEL OUT</strong> — get smaller or disappear</div>
-        <div class="vs-point">Crest + Trough = ZERO 🕳️</div>
-        <div><span class="result-tag dark">= DARK SPOT</span></div>
-        <svg viewBox="0 0 200 70" style="margin-top:10px; width:100%;">
-          <text x="4" y="14" fill="#7b8bb2" font-size="8">Wave 1</text>
-          <path d="M40,25 C52,5 62,5 74,25 S96,45 108,25 S130,5 142,25 S164,45 176,25" fill="none" stroke="#ff3e6c" stroke-width="2"/>
-          <text x="4" y="44" fill="#7b8bb2" font-size="8">Wave 2</text>
-          <path d="M40,42 C52,62 62,62 74,42 S96,22 108,42 S130,62 142,42 S164,22 176,42" fill="none" stroke="#ff3e6c" stroke-width="2"/>
-          <text x="4" y="64" fill="#888" font-size="8">Result</text>
-          <line x1="40" y1="55" x2="176" y2="55" stroke="#888" stroke-width="2.5" stroke-dasharray="4,3"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 7: YOUNG'S EXPERIMENT -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s7">
-  <div class="slide-badge">Slide 7 / 13</div>
-  <div class="reveal"><div class="label">Classic Experiment</div></div>
-  <div class="reveal"><h2>🔬 Young's Double-Slit Experiment</h2></div>
-  <div class="reveal"><p style="color:var(--muted); font-style:italic; margin-bottom:20px;">The most famous experiment proving light is a wave! (Thomas Young, 1801)</p></div>
-  <div class="reveal">
-    <div class="young-layout">
-      <div class="step-numbered">
-        <div class="yn-step"><div class="yn-num">1</div><p class="yn-text">Shine a laser at a barrier with <strong>TWO tiny slits</strong></p></div>
-        <div class="yn-step"><div class="yn-num">2</div><p class="yn-text">Light passes through <strong>both slits at the same time</strong></p></div>
-        <div class="yn-step"><div class="yn-num">3</div><p class="yn-text">The two waves from each slit spread out (diffract)</p></div>
-        <div class="yn-step"><div class="yn-num">4</div><p class="yn-text">They meet and <strong>interfere</strong> with each other</p></div>
-        <div class="yn-step"><div class="yn-num">5</div><p class="yn-text">On a screen: alternating <strong>bright and dark bands</strong></p></div>
-        <div class="yn-step"><div class="yn-num">6</div><p class="yn-text">These bands (fringes) <strong>prove wave behavior!</strong> 🎉</p></div>
-      </div>
-      <div class="young-diagram">
-        <svg viewBox="0 0 280 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
-          <!-- laser -->
-          <rect x="8" y="98" width="32" height="18" rx="3" fill="#ff3e6c"/>
-          <text x="12" y="127" fill="#7b8bb2" font-size="8" font-family="sans-serif">laser</text>
-          <!-- beam -->
-          <line x1="40" y1="107" x2="96" y2="107" stroke="#ff3e6c" stroke-width="1.5"/>
-          <!-- barrier -->
-          <rect x="96" y="10" width="7" height="72" fill="#e8eeff"/>
-          <rect x="96" y="122" width="7" height="30" fill="#e8eeff"/>
-          <rect x="96" y="170" width="7" height="42" fill="#e8eeff"/>
-          <text x="72" y="107" fill="#ffd700" font-size="8">slits</text>
-          <!-- rays from slit1 (y=94) to screen -->
-          <line x1="103" y1="94" x2="238" y2="18" stroke="#00c9c8" stroke-width="1" opacity="0.8"/>
-          <line x1="103" y1="94" x2="238" y2="55" stroke="#00c9c8" stroke-width="1" opacity="0.8"/>
-          <line x1="103" y1="94" x2="238" y2="94" stroke="#00c9c8" stroke-width="1.5" opacity="0.9"/>
-          <!-- rays from slit2 (y=152) to screen -->
-          <line x1="103" y1="152" x2="238" y2="94" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
-          <line x1="103" y1="152" x2="238" y2="140" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
-          <line x1="103" y1="152" x2="238" y2="186" stroke="#ffd700" stroke-width="1" opacity="0.8"/>
-          <!-- screen -->
-          <rect x="236" y="8" width="6" height="204" fill="#555"/>
-          <!-- fringes on screen -->
-          <rect x="242" y="10" width="16" height="20" fill="#1a1a2e"/>
-          <rect x="242" y="30" width="16" height="20" fill="#ffd700" opacity="0.9"/>
-          <rect x="242" y="50" width="16" height="20" fill="#1a1a2e"/>
-          <rect x="242" y="70" width="16" height="20" fill="#ffd700" opacity="0.7"/>
-          <rect x="242" y="90" width="16" height="22" fill="#ffd700"/>
-          <rect x="242" y="112" width="16" height="20" fill="#ffd700" opacity="0.7"/>
-          <rect x="242" y="132" width="16" height="20" fill="#1a1a2e"/>
-          <rect x="242" y="152" width="16" height="20" fill="#ffd700" opacity="0.9"/>
-          <rect x="242" y="172" width="16" height="20" fill="#1a1a2e"/>
-          <rect x="242" y="192" width="16" height="18" fill="#ffd700" opacity="0.7"/>
-          <text x="246" y="218" fill="#ffd700" font-size="8">fringes!</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 8: THE MATH -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s8">
-  <div class="slide-badge">Slide 8 / 13</div>
-  <div class="reveal"><div class="label">Equations</div></div>
-  <div class="reveal"><h2>📐 The Math Behind It</h2></div>
-  <div class="reveal">
-    <div class="eq-box">
-      <div class="eq-label">Double-Slit Formula</div>
-      <div class="eq-formula">d · sin(θ) = m · λ</div>
-    </div>
-  </div>
-  <div class="reveal">
-    <div class="var-grid">
-      <div class="var-card">
-        <div class="var-sym" style="background:rgba(0,201,200,0.2);color:var(--teal);">d</div>
-        <div class="var-def"><strong>d</strong> = distance between the two slits</div>
-      </div>
-      <div class="var-card">
-        <div class="var-sym" style="background:rgba(255,62,108,0.2);color:var(--pink);">θ</div>
-        <div class="var-def"><strong>θ</strong> = angle to the bright or dark fringe</div>
-      </div>
-      <div class="var-card">
-        <div class="var-sym" style="background:rgba(255,215,0,0.15);color:var(--yellow);">m</div>
-        <div class="var-def"><strong>m</strong> = order number (0, ±1, ±2...) — which fringe?</div>
-      </div>
-      <div class="var-card">
-        <div class="var-sym" style="background:rgba(57,217,138,0.15);color:var(--green);">λ</div>
-        <div class="var-def"><strong>λ</strong> = wavelength of the light being used</div>
-      </div>
-    </div>
-  </div>
-  <div class="reveal">
-    <p style="margin-top:20px; font-size:0.9rem; color:var(--muted); font-style:italic; text-align:center;">
-      Bright fringes: m = 0, ±1, ±2 … &nbsp;&nbsp;|&nbsp;&nbsp; Dark fringes: m = ±½, ±3/2 …
-    </p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 9: REAL LIFE EXAMPLES -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s9">
-  <div class="slide-badge">Slide 9 / 13</div>
-  <div class="reveal"><div class="label">Applications</div></div>
-  <div class="reveal"><h2>🌍 Real Life Examples</h2></div>
-  <div class="reveal"><p style="color:var(--muted); font-style:italic; margin-bottom:4px;">These aren't just textbook things — we see them in everyday life!</p></div>
-  <div class="reveal">
-    <div class="eg-grid">
-      <div class="eg-card"><div class="eg-icon">💿</div><div class="eg-title">CDs & DVDs</div><div class="eg-desc">The rainbow colors on CDs are caused by light diffracting off tiny grooves on the disk surface</div></div>
-      <div class="eg-card"><div class="eg-icon">🫧</div><div class="eg-title">Soap Bubbles</div><div class="eg-desc">Rainbow colors from thin-film interference — light waves reflecting from both surfaces cancel or add up</div></div>
-      <div class="eg-card"><div class="eg-icon">🦋</div><div class="eg-title">Butterfly Wings</div><div class="eg-desc">Microscopic wing structures cause diffraction of light, making them shimmer with color!</div></div>
-      <div class="eg-card"><div class="eg-icon">📡</div><div class="eg-title">Radio Waves</div><div class="eg-desc">Radio waves diffract around buildings — that's why you get signal indoors even without line-of-sight</div></div>
-      <div class="eg-card"><div class="eg-icon">👁️</div><div class="eg-title">Eye Floaters</div><div class="eg-desc">Blurry dots you see in bright light happen because of diffraction of light inside your eye</div></div>
-      <div class="eg-card"><div class="eg-icon">🌊</div><div class="eg-title">Ocean Waves</div><div class="eg-desc">Ocean waves diffract around islands and through harbor gaps — exact same principle as light!</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 10: EVIDENCE SUMMARY -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s10">
-  <div class="slide-badge">Slide 10 / 13</div>
-  <div class="reveal"><div class="label">Summary</div></div>
-  <div class="reveal"><h2>📊 Evidence That Light is a Wave</h2></div>
-  <div class="reveal"><p style="color:var(--muted); margin-bottom:8px;">All the evidence gathered in this project:</p></div>
-  <div class="reveal">
-    <div class="ev-list">
-      <div class="ev-row"><div class="ev-num">01</div><div class="ev-body"><div class="ev-title">Diffraction occurs</div><div class="ev-detail">Light spreads around obstacles — particles cannot do this</div></div><span class="ev-badge">✅ Strong</span></div>
-      <div class="ev-row"><div class="ev-num">02</div><div class="ev-body"><div class="ev-title">Interference patterns appear</div><div class="ev-detail">Light creates alternating bright/dark fringes — constructive and destructive</div></div><span class="ev-badge">✅ Strong</span></div>
-      <div class="ev-row"><div class="ev-num">03</div><div class="ev-body"><div class="ev-title">Young's Double-Slit Experiment</div><div class="ev-detail">Proved in 1801 — two slits produce a clear wave interference pattern on screen</div></div><span class="ev-badge">✅ Very Strong</span></div>
-      <div class="ev-row"><div class="ev-num">04</div><div class="ev-body"><div class="ev-title">Wavelength can be measured</div><div class="ev-detail">We can measure the wavelength of light using fringe spacing — only possible for waves</div></div><span class="ev-badge">✅ Strong</span></div>
-      <div class="ev-row"><div class="ev-num">05</div><div class="ev-body"><div class="ev-title">Colors = different wavelengths</div><div class="ev-detail">Red, blue, green light have different wavelengths — just like all wave types</div></div><span class="ev-badge">✅ Strong</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 11: REFLECTION -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s11">
-  <div class="slide-badge">Slide 11 / 13</div>
-  <div class="reveal"><div class="label">Personal Reflection</div></div>
-  <div class="reveal"><h2>🤔 My Reflection</h2></div>
-  <div class="reveal">
-    <div class="ref-grid">
-      <div class="ref-card">
-        <div class="ref-q">Most interesting thing I learned</div>
-        <p class="ref-a">Before this project, I always thought light was just... light. But finding out that it actually BENDS and creates patterns blew my mind! The soap bubble colors finally make sense now.</p>
-      </div>
-      <div class="ref-card">
-        <div class="ref-q">Biggest challenge</div>
-        <p class="ref-a">Understanding destructive interference was confusing at first. How can two waves together equal nothing? But once I drew it out, it clicked — the crest of one fills the trough of the other perfectly.</p>
-      </div>
-      <div class="ref-card">
-        <div class="ref-q">What surprised me most</div>
-        <p class="ref-a">Young's experiment was done in 1801! Scientists figured this out over 200 years ago with just light, a barrier, and a screen. That's actually amazing.</p>
-      </div>
-      <div class="ref-card">
-        <div class="ref-q">How I'd improve my project</div>
-        <p class="ref-a">I would've liked to try an actual diffraction grating experiment to see the patterns myself. Maybe next time I can use a laser pointer and a CD!</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 12: SOURCES -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s12">
-  <div class="slide-badge">Slide 12 / 13</div>
-  <div class="reveal"><div class="label">References</div></div>
-  <div class="reveal"><h2>📚 Sources & Resources</h2></div>
-  <div class="reveal">
-    <div class="src-grid">
-      <div class="src-card">
-        <div class="src-cat">📖 Textbook</div>
-        <ul>
-          <li>McGraw Hill Physics Textbook — Chapter on Wave Optics</li>
-          <li>Class notes from synchronous sessions</li>
-        </ul>
-      </div>
-      <div class="src-card">
-        <div class="src-cat">💻 Simulations</div>
-        <ul>
-          <li>PhET Interactive Simulations — Wave Interference (phet.colorado.edu)</li>
-          <li>Gizmos — Light diffraction activity (apps.explorelearning.com)</li>
-        </ul>
-      </div>
-      <div class="src-card">
-        <div class="src-cat">▶️ Videos</div>
-        <ul>
-          <li>YouTube — Khan Academy: Wave interference explained</li>
-          <li>YouTube — Veritasium: Young's Double Slit Experiment</li>
-        </ul>
-      </div>
-      <div class="src-card">
-        <div class="src-cat">📝 Other</div>
-        <ul>
-          <li>Mid-project check-in feedback from subject teacher</li>
-          <li>Peer review notes from classmates during seminar session</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════════════ -->
-<!-- SLIDE 13: CONCLUSION -->
-<!-- ══════════════════════════════════════════════ -->
-<section class="slide" id="s13">
-  <div class="blob blob-1" style="width:600px;height:600px;top:-150px;right:-150px;background:radial-gradient(circle,rgba(0,201,200,0.12) 0%,transparent 70%)"></div>
-  <div class="blob blob-2" style="width:400px;height:400px;bottom:-100px;left:-100px;background:radial-gradient(circle,rgba(255,62,108,0.12) 0%,transparent 70%)"></div>
-
-  <div class="reveal"><div class="label">Final Answer</div></div>
-  <div class="reveal"><h2>🎯 Conclusion</h2></div>
-  <div class="reveal">
-    <div class="conc-quote">
-      "Diffraction and interference are BOTH wave behaviors. Since light shows BOTH of them, light MUST behave like a wave. The patterns of bright and dark fringes are impossible to explain any other way."
-    </div>
-  </div>
-  <div class="reveal">
-    <div class="conc-points">
-      <div class="conc-point"><span class="conc-check">✅</span><p class="conc-text">Diffraction proves light bends around obstacles — a wave property that particles don't have</p></div>
-      <div class="conc-point"><span class="conc-check">✅</span><p class="conc-text">Constructive interference = bright fringes (waves add up to double the amplitude)</p></div>
-      <div class="conc-point"><span class="conc-check">✅</span><p class="conc-text">Destructive interference = dark fringes (waves cancel each other out completely)</p></div>
-      <div class="conc-point"><span class="conc-check">✅</span><p class="conc-text">Young's experiment in 1801 gave measurable, repeatable evidence using the double-slit setup</p></div>
-      <div class="conc-point"><span class="conc-check">✅</span><p class="conc-text">Real-world examples like CDs and soap bubbles confirm this every single day!</p></div>
-    </div>
-  </div>
-  <div class="reveal">
-    <div class="footer-bar">
-      Yamen Mohamad Hamad &nbsp;—&nbsp; Grade 10D &nbsp;—&nbsp; Physics: Light Patterns Project &nbsp;—&nbsp; Al Nahda National School – Boys &nbsp;—&nbsp; 2025–2026 Term 3
-    </div>
-  </div>
-</section>
-
-<script>
-  // ── SCROLL REVEAL ──
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) e.target.classList.add('visible');
+  // Diffracted fan rays
+  const fanAngles = [-38, -20, 0, 20, 38];
+  fanAngles.forEach(ang => {
+    const rad = (ang * Math.PI) / 180;
+    const len = 1.4;
+    s.addShape(pres.shapes.LINE, {
+      x: 6.7, y: 3.38,
+      w: len * Math.cos(rad), h: len * Math.sin(rad),
+      line: { color: C.pink, width: 1.5, transparency: 20 },
     });
-  }, { threshold: 0.12 });
-  reveals.forEach(r => observer.observe(r));
+  });
+  s.addText("waves fan out! ✨", { x: 7.5, y: 4.75, w: 2.1, h: 0.25, fontSize: 9, italic: true, color: C.pink, fontFace: "Calibri", margin: 0 });
+}
 
-  // ── NAV DOTS ──
-  const slides = document.querySelectorAll('.slide');
-  const dots = document.querySelectorAll('.dot');
+// ══════════════════════════════════════════════
+// SLIDE 6 — INTERFERENCE
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 6, 13, "Evidence #2");
+  sectionTitle(s, "🤝  Constructive vs Destructive Interference");
 
-  function scrollToSlide(i) {
-    slides[i].scrollIntoView({ behavior: 'smooth' });
+  s.addText("When two waves meet, they interact — this is called INTERFERENCE", {
+    x: 0.55, y: 1.28, w: 8.9, h: 0.3, fontSize: 12, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Constructive card
+  card(s, 0.4, 1.68, 4.3, 3.6, "1a472a");
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.4, y: 1.68, w: 4.3, h: 0.06, fill: { color: C.green }, line: { color: C.green } });
+  s.addText("✅  CONSTRUCTIVE", { x: 0.5, y: 1.76, w: 4.1, h: 0.36, fontSize: 16, bold: true, color: C.green, fontFace: "Trebuchet MS", align: "center", margin: 0 });
+  s.addText("Interference", { x: 0.5, y: 2.1, w: 4.1, h: 0.28, fontSize: 12, italic: true, color: C.green, fontFace: "Calibri", align: "center", margin: 0 });
+
+  const cpts = [
+    "Two crests meet OR two troughs meet",
+    "Waves ADD TOGETHER → get BIGGER",
+    "Crest + Crest = Double crest! 🌟",
+  ];
+  cpts.forEach((pt, i) => {
+    s.addText(pt, { x: 0.5, y: 2.48 + i * 0.48, w: 4.1, h: 0.42, fontSize: 11.5, color: "90ee90", fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+  // Result badge
+  card(s, 0.6, 3.95, 2.0, 0.35, "ffd70020");
+  s.addText("= BRIGHT SPOT", { x: 0.6, y: 3.96, w: 2.0, h: 0.32, fontSize: 12, bold: true, color: C.yellow, fontFace: "Trebuchet MS", align: "center", margin: 0 });
+
+  // Wave diagram constructive
+  card(s, 0.5, 4.42, 4.1, 0.68, C.deep);
+  const waveY = [4.62, 4.78, 4.55];
+  const wColors = [C.green, C.green, C.yellow];
+  const wAmps = [0.12, 0.12, 0.24];
+  wColors.forEach((wc, wi) => {
+    for (let i = 0; i < 20; i++) {
+      const t = i / 19;
+      const x = 0.65 + t * 3.7;
+      const y = waveY[wi] - Math.sin(t * Math.PI * 4) * wAmps[wi];
+      s.addShape(pres.shapes.OVAL, { x, y, w: 0.2, h: 0.055, fill: { color: wc }, line: { color: wc } });
+    }
+  });
+
+  // VS badge
+  s.addShape(pres.shapes.OVAL, { x: 4.6, y: 3.1, w: 0.8, h: 0.8, fill: { color: C.dark }, line: { color: C.muted } });
+  s.addText("VS", { x: 4.6, y: 3.15, w: 0.8, h: 0.68, fontSize: 13, bold: true, color: C.white, fontFace: "Trebuchet MS", align: "center" });
+
+  // Destructive card
+  card(s, 5.3, 1.68, 4.3, 3.6, "4a0000");
+  s.addShape(pres.shapes.RECTANGLE, { x: 5.3, y: 1.68, w: 4.3, h: 0.06, fill: { color: C.pink }, line: { color: C.pink } });
+  s.addText("❌  DESTRUCTIVE", { x: 5.4, y: 1.76, w: 4.1, h: 0.36, fontSize: 16, bold: true, color: C.pink, fontFace: "Trebuchet MS", align: "center", margin: 0 });
+  s.addText("Interference", { x: 5.4, y: 2.1, w: 4.1, h: 0.28, fontSize: 12, italic: true, color: C.pink, fontFace: "Calibri", align: "center", margin: 0 });
+
+  const dpts2 = [
+    "A crest meets a trough",
+    "Waves CANCEL OUT → get smaller or disappear",
+    "Crest + Trough = ZERO 🕳️",
+  ];
+  dpts2.forEach((pt, i) => {
+    s.addText(pt, { x: 5.4, y: 2.48 + i * 0.48, w: 4.1, h: 0.42, fontSize: 11.5, color: "ffaaaa", fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+  card(s, 5.4, 3.95, 2.0, 0.35, "ff3e6c20");
+  s.addText("= DARK SPOT", { x: 5.4, y: 3.96, w: 2.0, h: 0.32, fontSize: 12, bold: true, color: C.muted, fontFace: "Trebuchet MS", align: "center", margin: 0 });
+
+  // Wave diagram destructive
+  card(s, 5.4, 4.42, 4.1, 0.68, C.deep);
+  // Wave 1 up
+  for (let i = 0; i < 20; i++) {
+    const t = i / 19;
+    const x = 5.55 + t * 3.7;
+    const y = 4.62 - Math.sin(t * Math.PI * 4) * 0.12;
+    s.addShape(pres.shapes.OVAL, { x, y, w: 0.2, h: 0.055, fill: { color: C.pink }, line: { color: C.pink } });
   }
+  // Wave 2 inverted
+  for (let i = 0; i < 20; i++) {
+    const t = i / 19;
+    const x = 5.55 + t * 3.7;
+    const y = 4.78 + Math.sin(t * Math.PI * 4) * 0.12;
+    s.addShape(pres.shapes.OVAL, { x, y, w: 0.2, h: 0.055, fill: { color: C.pink }, line: { color: C.pink } });
+  }
+  // Result = flat line
+  s.addShape(pres.shapes.LINE, { x: 5.55, y: 4.94, w: 3.7, h: 0, line: { color: "888888", width: 2, dashType: "dash" } });
+}
 
-  const slideObserver = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting && e.intersectionRatio > 0.4) {
-        const idx = Array.from(slides).indexOf(e.target);
-        dots.forEach(d => d.classList.remove('active'));
-        if (dots[idx]) dots[idx].classList.add('active');
-      }
+// ══════════════════════════════════════════════
+// SLIDE 7 — YOUNG'S DOUBLE SLIT
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+  slideLabel(s, 7, 13, "Classic Experiment");
+  sectionTitle(s, "🔬  Young's Double-Slit Experiment");
+
+  s.addText("The most famous experiment proving light is a wave! (Thomas Young, 1801)", {
+    x: 0.55, y: 1.28, w: 8.9, h: 0.3, fontSize: 12, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Steps
+  const steps = [
+    "Shine a laser at a barrier with TWO tiny slits",
+    "Light passes through both slits at the same time",
+    "The two waves from each slit spread out (diffract)",
+    "They meet and interfere with each other",
+    "On a screen: alternating bright and dark bands",
+    "These bands (fringes) PROVE wave behavior! 🎉",
+  ];
+  steps.forEach((st, i) => {
+    const numColor = i % 2 === 0 ? C.teal : C.pink;
+    s.addShape(pres.shapes.OVAL, { x: 0.55, y: 1.65 + i * 0.57, w: 0.32, h: 0.32, fill: { color: numColor }, line: { color: numColor } });
+    s.addText(`${i + 1}`, { x: 0.55, y: 1.66 + i * 0.57, w: 0.32, h: 0.3, fontSize: 11, bold: true, color: C.dark, fontFace: "Trebuchet MS", align: "center" });
+    s.addText(st, { x: 0.96, y: 1.66 + i * 0.57, w: 4.1, h: 0.5, fontSize: 11.5, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+
+  // Diagram box
+  card(s, 5.25, 1.6, 4.5, 3.85, C.deep);
+  s.addText("Experiment Diagram", { x: 5.25, y: 1.68, w: 4.5, h: 0.25, fontSize: 9, color: C.yellow, fontFace: "Trebuchet MS", align: "center", charSpacing: 1, margin: 0 });
+
+  // Laser
+  s.addShape(pres.shapes.RECTANGLE, { x: 5.38, y: 3.1, w: 0.55, h: 0.32, fill: { color: C.pink }, line: { color: C.pink } });
+  s.addText("laser", { x: 5.35, y: 3.44, w: 0.65, h: 0.2, fontSize: 8, color: C.muted, fontFace: "Calibri", align: "center", margin: 0 });
+  // laser beam
+  s.addShape(pres.shapes.LINE, { x: 5.93, y: 3.26, w: 0.72, h: 0, line: { color: C.pink, width: 1.5 } });
+
+  // Barrier with 2 slits
+  s.addShape(pres.shapes.RECTANGLE, { x: 6.65, y: 2.1, w: 0.1, h: 0.95, fill: { color: C.white }, line: { color: C.white } });
+  s.addShape(pres.shapes.RECTANGLE, { x: 6.65, y: 3.4, w: 0.1, h: 0.45, fill: { color: C.white }, line: { color: C.white } });
+  s.addShape(pres.shapes.RECTANGLE, { x: 6.65, y: 4.1, w: 0.1, h: 1.2, fill: { color: C.white }, line: { color: C.white } });
+  s.addText("slits", { x: 6.3, y: 3.18, w: 0.7, h: 0.2, fontSize: 8, color: C.teal, fontFace: "Calibri", align: "center", margin: 0 });
+
+  // Rays from slit 1 (y≈3.05) and slit 2 (y≈3.62)
+  const rayTargets = [2.15, 2.6, 3.05, 3.5, 3.95, 4.4, 4.85];
+  rayTargets.forEach((ty, ri) => {
+    const fromY = ri < 4 ? 3.05 : 3.62;
+    const col = ri % 2 === 0 ? C.teal : C.yellow;
+    const dx = 9.3 - 6.75, dy = ty - fromY;
+    s.addShape(pres.shapes.LINE, { x: 6.75, y: fromY, w: dx, h: dy, line: { color: col, width: 0.8, transparency: 30 } });
+  });
+
+  // Screen
+  s.addShape(pres.shapes.RECTANGLE, { x: 9.35, y: 2.05, w: 0.1, h: 3.25, fill: { color: "555555" }, line: { color: "555555" } });
+
+  // Fringes
+  const fringeColors = [C.dark, C.yellow, C.dark, C.yellow, C.yellow, C.yellow, C.dark, C.yellow, C.dark];
+  fringeColors.forEach((fc, fi) => {
+    s.addShape(pres.shapes.RECTANGLE, { x: 9.45, y: 2.08 + fi * 0.35, w: 0.22, h: 0.32, fill: { color: fc }, line: { color: fc } });
+  });
+  s.addText("fringes!", { x: 9.42, y: 5.2, w: 0.8, h: 0.22, fontSize: 8, color: C.yellow, fontFace: "Calibri", margin: 0 });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 8 — THE MATH
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 8, 13, "Equations");
+  sectionTitle(s, "📐  The Math Behind It");
+
+  s.addText("(Don't worry — it's not that scary!)", {
+    x: 0.55, y: 1.28, w: 5, h: 0.28, fontSize: 11, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  // Formula box
+  card(s, 0.55, 1.65, 8.9, 1.12, C.navy2);
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y: 1.65, w: 8.9, h: 0.06, fill: { color: C.teal }, line: { color: C.teal } });
+  s.addText("Double-Slit Formula", { x: 0.65, y: 1.72, w: 3, h: 0.28, fontSize: 10, color: C.yellow, fontFace: "Trebuchet MS", charSpacing: 1, margin: 0 });
+  s.addText("d · sin(θ) = m · λ", {
+    x: 0.55, y: 2.0, w: 8.9, h: 0.6,
+    fontSize: 30, bold: true, color: C.teal, fontFace: "Trebuchet MS", align: "center", margin: 0,
+  });
+
+  // Variable cards 2x2
+  const vars = [
+    { sym: "d", def: "= distance between the two slits", bg: C.teal, tc: C.dark },
+    { sym: "θ", def: "= angle to the bright or dark fringe", bg: C.pink, tc: C.dark },
+    { sym: "m", def: "= order number (0, ±1, ±2...) — which fringe?", bg: C.yellow, tc: C.dark },
+    { sym: "λ", def: "= wavelength of the light being used", bg: C.green, tc: C.dark },
+  ];
+  vars.forEach((v, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 0.55 + col * 4.6, y = 2.9 + row * 1.02;
+    card(s, x, y, 4.35, 0.88, C.card);
+    s.addShape(pres.shapes.OVAL, { x: x + 0.12, y: y + 0.18, w: 0.5, h: 0.5, fill: { color: v.bg }, line: { color: v.bg } });
+    s.addText(v.sym, { x: x + 0.12, y: y + 0.19, w: 0.5, h: 0.45, fontSize: 16, bold: true, color: v.tc, fontFace: "Trebuchet MS", align: "center" });
+    s.addText(v.sym + " " + v.def, { x: x + 0.72, y: y + 0.2, w: 3.55, h: 0.5, fontSize: 11.5, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+
+  s.addText("Bright fringes: m = 0, ±1, ±2 …     |     Dark fringes: m = ±½, ±3/2 …", {
+    x: 0.55, y: 5.18, w: 8.9, h: 0.28,
+    fontSize: 10.5, italic: true, color: C.muted, fontFace: "Calibri", align: "center", margin: 0,
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 9 — REAL LIFE EXAMPLES
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+  slideLabel(s, 9, 13, "Applications");
+  sectionTitle(s, "🌍  Real Life Examples");
+
+  s.addText("These aren't just textbook things — we see them in everyday life!", {
+    x: 0.55, y: 1.28, w: 8.9, h: 0.28, fontSize: 12, italic: true, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  const egs = [
+    { icon: "💿", title: "CDs & DVDs",      desc: "Rainbow colors caused by light diffracting off tiny grooves on the disk surface" },
+    { icon: "🫧", title: "Soap Bubbles",     desc: "Rainbow colors from thin-film interference — waves reflecting from both surfaces" },
+    { icon: "🦋", title: "Butterfly Wings",  desc: "Microscopic wing structures diffract light, making them shimmer with color!" },
+    { icon: "📡", title: "Radio Waves",      desc: "Diffract around buildings — that's why you get signal indoors" },
+    { icon: "👁️",  title: "Eye Floaters",    desc: "Blurry dots in bright light happen because of diffraction inside your eye" },
+    { icon: "🌊", title: "Ocean Waves",      desc: "Diffract around islands and through harbor gaps — same principle as light!" },
+  ];
+
+  egs.forEach((eg, i) => {
+    const col = i % 3, row = Math.floor(i / 3);
+    const x = 0.42 + col * 3.18, y = 1.72 + row * 1.88;
+    card(s, x, y, 3.0, 1.72, C.card);
+    s.addText(eg.icon, { x: x + 0.12, y: y + 0.1, w: 0.55, h: 0.48, fontSize: 22, margin: 0 });
+    s.addText(eg.title, { x: x + 0.12, y: y + 0.6, w: 2.76, h: 0.3, fontSize: 12, bold: true, color: C.white, fontFace: "Trebuchet MS", margin: 0 });
+    s.addText(eg.desc, { x: x + 0.12, y: y + 0.92, w: 2.76, h: 0.72, fontSize: 9.5, color: C.muted, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 10 — EVIDENCE SUMMARY
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 10, 13, "Summary");
+  sectionTitle(s, "📊  Evidence That Light is a Wave");
+
+  s.addText("All the evidence gathered in this project:", {
+    x: 0.55, y: 1.28, w: 8.9, h: 0.28, fontSize: 12, color: C.muted, fontFace: "Calibri", margin: 0,
+  });
+
+  const evs = [
+    { num: "01", title: "Diffraction occurs",             detail: "Light spreads around obstacles — particles cannot do this" },
+    { num: "02", title: "Interference patterns appear",   detail: "Light creates alternating bright/dark fringes — constructive and destructive" },
+    { num: "03", title: "Young's Double-Slit Experiment", detail: "Proved in 1801 — two slits produce a clear wave interference pattern on screen" },
+    { num: "04", title: "Wavelength can be measured",     detail: "We can measure the wavelength of light using fringe spacing — only possible for waves" },
+    { num: "05", title: "Colors = different wavelengths", detail: "Red, blue, green light have different wavelengths — just like all wave types" },
+  ];
+
+  evs.forEach((ev, i) => {
+    const y = 1.68 + i * 0.76;
+    card(s, 0.55, y, 8.9, 0.68, C.card);
+    s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y, w: 0.5, h: 0.68, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addText(ev.num, { x: 0.55, y: y + 0.14, w: 0.5, h: 0.38, fontSize: 12, bold: true, color: C.dark, fontFace: "Trebuchet MS", align: "center" });
+    s.addText(ev.title, { x: 1.15, y: y + 0.08, w: 5.5, h: 0.28, fontSize: 13, bold: true, color: C.yellow, fontFace: "Trebuchet MS", margin: 0 });
+    s.addText(ev.detail, { x: 1.15, y: y + 0.36, w: 6.0, h: 0.26, fontSize: 10, color: C.muted, fontFace: "Calibri", margin: 0 });
+    s.addText("✅ Strong", { x: 7.5, y: y + 0.18, w: 1.8, h: 0.28, fontSize: 11, bold: true, color: C.green, fontFace: "Trebuchet MS", align: "right", margin: 0 });
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 11 — REFLECTION
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+  slideLabel(s, 11, 13, "Personal Reflection");
+  sectionTitle(s, "🤔  My Reflection");
+
+  const refs = [
+    {
+      q: "Most interesting thing I learned",
+      a: "Before this project, I always thought light was just... light. But finding out it actually BENDS and creates patterns blew my mind! The soap bubble colors finally make sense.",
+    },
+    {
+      q: "Biggest challenge",
+      a: "Understanding destructive interference was confusing at first. How can two waves together equal nothing? Once I drew it out it clicked — the crest fills the trough perfectly.",
+    },
+    {
+      q: "What surprised me most",
+      a: "Young's experiment was done in 1801! Scientists figured this out 200+ years ago with just light, a barrier, and a screen. That's actually amazing.",
+    },
+    {
+      q: "How I'd improve my project",
+      a: "I would've liked to try a real diffraction grating experiment. Maybe next time I can use a laser pointer and a CD!",
+    },
+  ];
+
+  refs.forEach((r, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 0.45 + col * 4.8, y = 1.3 + row * 2.1;
+    card(s, x, y, 4.6, 1.92, C.card);
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: 4.6, h: 0.06, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addText(r.q.toUpperCase(), { x: x + 0.15, y: y + 0.12, w: 4.3, h: 0.28, fontSize: 8.5, bold: true, color: C.teal, fontFace: "Trebuchet MS", charSpacing: 1, margin: 0 });
+    s.addText(r.a, { x: x + 0.15, y: y + 0.46, w: 4.3, h: 1.35, fontSize: 11, italic: true, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 12 — SOURCES
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.navy };
+  slideLabel(s, 12, 13, "References");
+  sectionTitle(s, "📚  Sources & Resources");
+
+  const srcs = [
+    {
+      cat: "📖 Textbook",
+      items: ["McGraw Hill Physics Textbook — Wave Optics chapter", "Class notes from synchronous sessions"],
+    },
+    {
+      cat: "💻 Simulations",
+      items: ["PhET Interactive Simulations — Wave Interference (phet.colorado.edu)", "Gizmos — Light diffraction activity (apps.explorelearning.com)"],
+    },
+    {
+      cat: "▶️ Videos",
+      items: ["YouTube — Khan Academy: Wave interference explained", "YouTube — Veritasium: Young's Double Slit Experiment"],
+    },
+    {
+      cat: "📝 Other",
+      items: ["Mid-project check-in feedback from subject teacher", "Peer review notes from classmates during seminar session"],
+    },
+  ];
+
+  srcs.forEach((src, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = 0.45 + col * 4.8, y = 1.3 + row * 2.1;
+    card(s, x, y, 4.6, 1.92, C.card);
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: 4.6, h: 0.42, fill: { color: C.teal }, line: { color: C.teal } });
+    s.addText(src.cat, { x: x + 0.15, y: y + 0.07, w: 4.3, h: 0.3, fontSize: 12, bold: true, color: C.dark, fontFace: "Trebuchet MS", margin: 0 });
+    src.items.forEach((item, j) => {
+      s.addShape(pres.shapes.OVAL, { x: x + 0.15, y: y + 0.58 + j * 0.6, w: 0.1, h: 0.1, fill: { color: C.teal }, line: { color: C.teal } });
+      s.addText(item, { x: x + 0.32, y: y + 0.52 + j * 0.6, w: 4.15, h: 0.52, fontSize: 10.5, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
     });
-  }, { threshold: 0.4 });
-  slides.forEach(s => slideObserver.observe(s));
-</script>
-</body>
-</html>
+  });
+}
+
+// ══════════════════════════════════════════════
+// SLIDE 13 — CONCLUSION
+// ══════════════════════════════════════════════
+{
+  const s = pres.addSlide();
+  s.background = { color: C.dark };
+
+  s.addShape(pres.shapes.OVAL, { x: 7.2, y: -0.8, w: 4, h: 4, fill: { color: C.teal, transparency: 90 }, line: { color: C.teal, transparency: 90 } });
+  s.addShape(pres.shapes.OVAL, { x: -0.8, y: 4.0, w: 3, h: 3, fill: { color: C.pink, transparency: 90 }, line: { color: C.pink, transparency: 90 } });
+
+  slideLabel(s, 13, 13, "Final Answer");
+  sectionTitle(s, "🎯  Conclusion");
+
+  // Quote
+  card(s, 0.55, 1.28, 8.9, 0.95, C.navy2);
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y: 1.28, w: 0.08, h: 0.95, fill: { color: C.teal }, line: { color: C.teal } });
+  s.addText('"Diffraction and interference are BOTH wave behaviors. Since light shows BOTH of them, light MUST behave like a wave. The patterns of bright and dark fringes are impossible to explain any other way."', {
+    x: 0.72, y: 1.33, w: 8.65, h: 0.85,
+    fontSize: 12, italic: true, color: C.teal, fontFace: "Calibri", wrap: true, margin: 0,
+  });
+
+  // Conclusion points
+  const cpts = [
+    "Diffraction proves light bends around obstacles — a wave property that particles don't have",
+    "Constructive interference = bright fringes (waves add up to double the amplitude)",
+    "Destructive interference = dark fringes (waves cancel each other out completely)",
+    "Young's experiment in 1801 gave measurable, repeatable evidence using double-slit setup",
+    "Real-world examples like CDs and soap bubbles confirm this every single day!",
+  ];
+  cpts.forEach((pt, i) => {
+    card(s, 0.55, 2.35 + i * 0.54, 8.9, 0.46, C.card);
+    s.addShape(pres.shapes.OVAL, { x: 0.62, y: 2.42 + i * 0.54, w: 0.28, h: 0.28, fill: { color: C.green }, line: { color: C.green } });
+    s.addText("✓", { x: 0.62, y: 2.42 + i * 0.54, w: 0.28, h: 0.28, fontSize: 10, bold: true, color: C.dark, fontFace: "Trebuchet MS", align: "center" });
+    s.addText(pt, { x: 1.02, y: 2.38 + i * 0.54, w: 8.35, h: 0.42, fontSize: 11.5, color: C.light, fontFace: "Calibri", wrap: true, margin: 0 });
+  });
+
+  // Footer bar
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.55, y: 5.18, w: 8.9, h: 0.3, fill: { color: C.pink }, line: { color: C.pink } });
+  s.addText("Yamen Mohamad Hamad  —  Grade 10D  —  Physics: Light Patterns Project  —  Al Nahda National School – Boys  —  2025–2026 Term 3", {
+    x: 0.55, y: 5.18, w: 8.9, h: 0.3,
+    fontSize: 8.5, bold: true, color: C.white, fontFace: "Trebuchet MS", align: "center", margin: 0,
+  });
+}
+
+// ── WRITE ──
+pres.writeFile({ fileName: "/home/claude/LightPatterns_Yamen_v2.pptx" });
+console.log("Done!");
